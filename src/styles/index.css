@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.h1-gradient {
+  background: linear-gradient(90deg, #ff9933 0%, #ff6600 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.card-soft {
+  @apply bg-white rounded-xl p-6 shadow-md;
+}
+.card-soft-dark {
+  @apply bg-gray-800 rounded-xl p-6 shadow-md;
+}
