@@ -17,8 +17,27 @@ export default function Home() {
   }
 
   const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+    hidden: { opacity: 0, y: 50 },
+    show: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } },
+  }
+
+  const bounceIn = {
+    hidden: { opacity: 0, scale: 0.8 },
+    show: {
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring", stiffness: 120, damping: 10 },
+    },
+  }
+
+  const popIn = {
+    hidden: { opacity: 0, y: 30, rotate: -5 },
+    show: {
+      opacity: 1,
+      y: 0,
+      rotate: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
   }
 
   return (
@@ -31,51 +50,72 @@ export default function Home() {
       }}
     >
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40" />
 
       {/* Animated Content */}
       <motion.div
-        className="relative z-10 p-10 text-white"
+        className="relative z-10 p-10"
         variants={container}
         initial="hidden"
         animate="show"
       >
         {/* Title */}
         <motion.h1
-          className="text-5xl md:text-6xl font-extrabold text-gold drop-shadow-lg"
-          variants={fadeUp}
+          className="text-5xl md:text-7xl font-serif font-extrabold bg-gradient-to-r from-yellow-300 via-orange-400 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_4px_6px_rgba(0,0,0,0.6)]"
+          variants={bounceIn}
         >
           Kolam Studio
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
-          className="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-100 leading-relaxed"
+          className="mt-6 text-lg md:text-2xl max-w-2xl mx-auto font-light text-gray-100 leading-relaxed"
           variants={fadeUp}
         >
           Discover the mathematical beauty of traditional Indian Kolam designs —
-          where <span className="text-gold font-semibold">art</span> meets{" "}
-          <span className="text-deeporange font-semibold">geometry</span> and
+          where{" "}
+          <span className="text-yellow-300 font-semibold">art</span> meets{" "}
+          <span className="text-orange-400 font-semibold">geometry</span> and
           culture.
         </motion.p>
 
         {/* Buttons */}
         <motion.div
-          className="mt-8 flex flex-col items-center gap-4"
-          variants={fadeUp}
+          className="mt-10 flex flex-col items-center gap-6"
+          variants={container}
         >
           {/* Top row: Start Exploring + Upload */}
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button onClick={() => navigate("/draw")}>Start Exploring</Button>
-            <Button onClick={() => navigate("/upload")}>Upload & Analyze</Button>
-          </div>
+          <motion.div
+            className="flex flex-wrap justify-center gap-6"
+            variants={popIn}
+          >
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="primary" onClick={() => navigate("/draw")}>
+                Start Exploring
+              </Button>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="accent" onClick={() => navigate("/upload")}>
+                Upload & Analyze
+              </Button>
+            </motion.div>
+          </motion.div>
 
           {/* Bottom: Learn About Kolams */}
-          <div>
-            <Button variant="secondary" onClick={() => navigate("/history")}>
-              Learn About Kolams
-            </Button>
-          </div>
+          <motion.div variants={popIn}>
+            <motion.div
+              whileHover={{
+                scale: 1.08,
+                boxShadow: "0px 0px 20px rgba(255, 200, 100, 0.8)",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button variant="secondary" onClick={() => navigate("/history")}>
+                Learn About Kolams
+              </Button>
+            </motion.div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>

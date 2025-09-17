@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 export default function Navbar() {
   return (
     <motion.nav
-      className="bg-gradient-to-r from-orange-600 via-yellow-500 to-orange-400 shadow-lg p-4 flex justify-between items-center text-white"
+      className="bg-gradient-to-r from-orange-400/80 via-yellow-300/80 to-orange-300/80 backdrop-blur-md shadow-md p-4 flex justify-between items-center text-black"
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.7 }}
