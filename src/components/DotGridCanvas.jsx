@@ -1,198 +1,138 @@
-// src/components/DotGridCanvas.jsx
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 
-export default function DotGridCanvas({
-  width = 700,
-  height = 500,
-  background = "#ffffff",
-}) {
+export default function DotGridCanvas() {
   const canvasRef = useRef(null);
-  const isDrawing = useRef(false);
-  const [history, setHistory] = useState([]); // array of dataURLs
+  const [isDrawing, setIsDrawing] = useState(false);
 
-  // keep historyRef if you need direct access (not strictly required here)
-  const historyRef = useRef(history);
-  useEffect(() => {
-    historyRef.current = history;
-  }, [history]);
+  // 🎨 Brush states
+  const [brushColor, setBrushColor] = useState("#000000");
+  const [brushSize, setBrushSize] = useState(5);
 
-  useEffect(() => {
-    // Initialize canvas default styles
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    // fill background (optional)
-    ctx.fillStyle = background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // 🕘 Undo stack
+  const [history, setHistory] = useState([]);
 
-    // default stroke style
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "rgba(255,87,34,0.95)";
-    ctx.lineWidth = 3;
-  }, [width, height, background]);
-
-  // helper to get pointer coordinates relative to canvas
-  const getPointerPos = (evt) => {
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = evt.clientX - rect.left;
-    const y = evt.clientY - rect.top;
-    return { x, y };
-  };
-
-  // Save current canvas state (dataURL) before starting a new stroke
-  const pushState = () => {
-    try {
-      const canvas = canvasRef.current;
-      const data = canvas.toDataURL();
-      setHistory((prev) => {
-        const next = [...prev, data];
-        // limit history length to last 50 actions
-        if (next.length > 50) next.shift();
-        return next;
-      });
-    } catch (err) {
-      console.warn("Could not push canvas state:", err);
-    }
-  };
-
-  const handlePointerDown = (e) => {
-    // Save state before drawing the next stroke
-    pushState();
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const { x, y } = getPointerPos(e);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    isDrawing.current = true;
-
-    // capture pointer for smoother input (browser support)
-    if (canvas.setPointerCapture) {
-      try {
-        canvas.setPointerCapture(e.pointerId);
-      } catch {}
-    }
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDrawing.current) return;
+  const startDrawing = (e) => {
     const ctx = canvasRef.current.getContext("2d");
-    const { x, y } = getPointerPos(e);
-    // draw line to pointer
-    ctx.lineTo(x, y);
+    ctx.strokeStyle = brushColor;
+    ctx.lineWidth = brushSize;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    setIsDrawing(true);
+
+    // Save snapshot for undo
+    const snapshot = canvasRef.current.toDataURL();
+    setHistory((prev) => [...prev, snapshot]);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing) return;
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     ctx.stroke();
   };
 
-  const handlePointerUp = (e) => {
-    if (!isDrawing.current) return;
-    isDrawing.current = false;
-    // release pointer capture
-    const canvas = canvasRef.current;
-    if (canvas.releasePointerCapture) {
-      try {
-        canvas.releasePointerCapture(e.pointerId);
-      } catch {}
-    }
-    // Note: we DO NOT pushState here because we already saved BEFORE stroke.
+  const stopDrawing = () => {
+    setIsDrawing(false);
   };
 
-  const handlePointerLeave = (e) => {
-    // treat leaving the canvas as finishing the stroke
-    if (isDrawing.current) {
-      isDrawing.current = false;
-    }
-  };
-
+  // ↩ Undo last action
   const undo = () => {
-    setHistory((prev) => {
-      if (prev.length === 0) {
-        // nothing to undo: clear to blank
-        const ctx = canvasRef.current.getContext("2d");
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        // optional: repaint background
-        ctx.fillStyle = background;
-        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        return prev;
-      }
+    if (history.length === 0) return;
+    const last = history[history.length - 1];
+    setHistory((prev) => prev.slice(0, -1));
 
-      // Remove the last saved state (which was the state BEFORE the most recent stroke)
-      const newHistory = prev.slice(0, -1);
-      const last = newHistory.length ? newHistory[newHistory.length - 1] : null;
-
+    const img = new Image();
+    img.src = last;
+    img.onload = () => {
       const ctx = canvasRef.current.getContext("2d");
-      if (last) {
-        const img = new Image();
-        img.onload = () => {
-          ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-          ctx.drawImage(img, 0, 0);
-        };
-        img.src = last;
-      } else {
-        // nothing left: clear
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-        ctx.fillStyle = background;
-        ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      }
-
-      return newHistory;
-    });
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      ctx.drawImage(img, 0, 0);
+    };
   };
 
+  // 🧹 Clear canvas
   const clearCanvas = () => {
     const ctx = canvasRef.current.getContext("2d");
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    ctx.fillStyle = background;
-    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     setHistory([]);
   };
 
-  const savePNG = () => {
-    try {
-      const link = document.createElement("a");
-      link.download = "kolam-drawing.png";
-      link.href = canvasRef.current.toDataURL("image/png");
-      link.click();
-    } catch (err) {
-      console.error("Save failed:", err);
-    }
+  // 💾 Save canvas as PNG
+  const saveCanvas = () => {
+    const dataURL = canvasRef.current.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = "drawing.png";
+    link.click();
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center space-y-6">
+      {/* 🎛 Controls Panel*/ }
+      <div className="bg-white shadow-xl rounded-lg p-4 flex flex-wrap gap-4 items-center justify-center">
+        {/* Brush Color */}
+        <label className="flex items-center gap-2">
+          <span className="text-sm font-medium">Color:</span>
+          <input
+            type="color"
+            value={brushColor}
+            onChange={(e) => setBrushColor(e.target.value)}
+            className="w-10 h-10 p-0 border rounded"
+          />
+        </label>
+
+        {/* Brush Size*/ }
+        <label className="flex items-center gap-2">
+          <span className="text-sm font-medium">Size:</span>
+          <input
+            type="range"
+            min="1"
+            max="50"
+            value={brushSize}
+            onChange={(e) => setBrushSize(Number(e.target.value))}
+            className="cursor-pointer"
+          />
+          <span className="text-sm">{brushSize}px</span>
+        </label>
+
+        {/* Action Buttons*/ }
+        <div className="flex gap-2">
+          <button
+            onClick={undo}
+            className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-lg font-medium shadow"
+          >
+            Undo
+          </button>
+          <button
+            onClick={clearCanvas}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium shadow"
+          >
+            Clear
+          </button>
+          <button
+            onClick={saveCanvas}
+            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium shadow"
+          >
+            Save PNG
+          </button>
+        </div>
+      </div>
+
+      {/* 🖌 Canvas Area*/ }
       <canvas
         ref={canvasRef}
-        className="border border-gray-300 bg-white shadow-lg rounded-lg touch-none"
-        width={width}
-        height={height}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        onPointerLeave={handlePointerLeave}
+        width={800}
+        height={500}
+        className="border-2 border-gray-300 rounded-lg shadow-lg bg-white cursor-crosshair"
+        style={{
+          background: "linear-gradient(135deg, #FFB343 20%, #f7c81e 80%)",
+        }}
+        onMouseDown={startDrawing}
+        onMouseMove={draw}
+        onMouseUp={stopDrawing}
+        onMouseLeave={stopDrawing}
       />
-      <div className="space-x-3">
-        <button
-          onClick={undo}
-          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
-        >
-          Undo
-        </button>
-        <button
-          onClick={clearCanvas}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-        >
-          Clear
-        </button>
-        <button
-          onClick={savePNG}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-        >
-          Save PNG
-        </button>
-      </div>
     </div>
   );
 }
