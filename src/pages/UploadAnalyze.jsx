@@ -1,8 +1,7 @@
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import detectDots from "../utils/dotDetection"
 
 export default function UploadAnalyze() {
-  const [image, setImage] = useState(null)
   const canvasRef = useRef(null)
 
   const handleImageUpload = (e) => {
@@ -16,17 +15,25 @@ export default function UploadAnalyze() {
       canvas.height = img.height
       ctx.drawImage(img, 0, 0)
 
-      // dot detection
       const dots = detectDots(ctx, canvas.width, canvas.height)
-      ctx.fillStyle = "red"
-      dots.forEach(({ x, y }) => {
-        ctx.beginPath()
-        ctx.arc(x, y, 4, 0, Math.PI * 2)
-        ctx.fill()
-      })
+
+      // glowing dots animation
+      let glow = 0
+      const animateGlow = () => {
+        ctx.drawImage(img, 0, 0)
+        dots.forEach(({ x, y }) => {
+          const radius = 4 + Math.sin(glow / 10) * 2
+          ctx.beginPath()
+          ctx.arc(x, y, radius, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(255,0,0,${0.7 + Math.sin(glow / 20) * 0.3})`
+          ctx.fill()
+        })
+        glow++
+        requestAnimationFrame(animateGlow)
+      }
+      animateGlow()
     }
     img.src = URL.createObjectURL(file)
-    setImage(file)
   }
 
   return (
@@ -36,7 +43,7 @@ export default function UploadAnalyze() {
       </h1>
       <div className="flex flex-col items-center space-y-4">
         <input type="file" onChange={handleImageUpload} accept="image/*" />
-        <canvas ref={canvasRef} className="border border-gray-400 bg-white shadow-lg" />
+        <canvas ref={canvasRef} className="border border-gray-400 bg-white shadow-lg rounded-lg" />
       </div>
     </div>
   )

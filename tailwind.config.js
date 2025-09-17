@@ -1,22 +1,20 @@
 module.exports = {
-  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      keyframes: {
+        "gradient-x": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+      },
+      animation: {
+        "gradient-x": "gradient-x 10s ease infinite",
+      },
       colors: {
-        saffron: '#ff9933',
-        deeporange: '#ff6600',
-        warmgold: '#ffd18c',
-        kolambg: '#fff8f2',
-        kolamtext: '#3e2723'
+        saffron: "#FF9933",
+        deeporange: "#FF5722",
+        gold: "#FFD700",
       },
-      fontFamily: {
-        heading: ['Merriweather', 'serif'],
-        body: ['Inter', 'sans-serif'],
-      },
-      boxShadow: {
-        'soft-orange': '0 8px 24px rgba(255,153,51,0.12)'
-      }
-    }
+    },
   },
-  plugins: [],
 }

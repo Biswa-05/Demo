@@ -8,7 +8,6 @@ export default function CoordinateCanvas() {
     const canvas = canvasRef.current
     const ctx = canvas.getContext("2d")
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.strokeStyle = "black"
     ctx.lineWidth = 2
 
     const lines = coords.split("\n").map(l => l.trim()).filter(Boolean)
@@ -19,18 +18,25 @@ export default function CoordinateCanvas() {
         const [x1, y1] = parts[0].split(",").map(Number)
         const [x2, y2] = parts[1].split(",").map(Number)
         if (!isNaN(x1) && !isNaN(y1) && !isNaN(x2) && !isNaN(y2)) {
+          ctx.strokeStyle = "rgba(34,139,34,0.8)"
+          ctx.shadowBlur = 10
+          ctx.shadowColor = "lime"
           ctx.beginPath()
           ctx.moveTo(x1, y1)
           ctx.lineTo(x2, y2)
           ctx.stroke()
+          ctx.shadowBlur = 0
         }
       } else {
         const [x, y] = line.split(",").map(Number)
         if (!isNaN(x) && !isNaN(y)) {
           ctx.beginPath()
-          ctx.arc(x, y, 3, 0, Math.PI * 2)
-          ctx.fillStyle = "red"
+          ctx.arc(x, y, 5, 0, Math.PI * 2)
+          ctx.fillStyle = "rgba(255,165,0,0.9)"
+          ctx.shadowBlur = 12
+          ctx.shadowColor = "gold"
           ctx.fill()
+          ctx.shadowBlur = 0
         }
       }
     })
@@ -53,25 +59,19 @@ export default function CoordinateCanvas() {
           value={coords}
           onChange={(e) => setCoords(e.target.value)}
           className="border p-4 w-64 h-64 font-mono text-sm"
-          placeholder={`Enter coordinates:\n50,50 -> 200,200\n100,100\n150,150 -> 300,300`}
+          placeholder={`Enter coordinates:\n50,50 -> 200,200\n100,100`}
         />
         <div className="flex flex-col items-center space-y-2">
           <canvas
             ref={canvasRef}
             width={400}
             height={400}
-            className="border border-gray-400 bg-white"
+            className="border border-gray-400 bg-white rounded-lg"
           />
-          <button
-            onClick={drawFromCoords}
-            className="px-4 py-2 bg-orange-600 text-white rounded"
-          >
+          <button onClick={drawFromCoords} className="px-4 py-2 bg-orange-600 text-white rounded">
             Draw
           </button>
-          <button
-            onClick={saveCanvas}
-            className="px-4 py-2 bg-green-600 text-white rounded"
-          >
+          <button onClick={saveCanvas} className="px-4 py-2 bg-green-600 text-white rounded">
             Save PNG
           </button>
         </div>
