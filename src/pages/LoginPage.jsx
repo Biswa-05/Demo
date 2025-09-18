@@ -1,177 +1,243 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import loginBg from "../assets/loginimage.jpg";
 
+
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Button from "../components/Button";
 
 export default function LoginPage({ setAuthUser }) {
-  const navigate = useNavigate();
-  const [isSignup, setIsSignup] = useState(false);
+  const [mode, setMode] = useState("login"); // 'login' | 'signup' | 'forgot' | 'otp' | 'reset' | 'continue'
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [otp, setOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [otpStep, setOtpStep] = useState(0); // 0: enter email, 1: enter otp, 2: choose action
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-  const handleSubmit = (e) => {
+  function handleLogin(e) {
     e.preventDefault();
-    if (isSignup) {
-      if (username && email && password) {
-        setAuthUser({ username, email });
-        navigate("/");
-      } else {
-        setError("Please fill all fields to sign up.");
-      }
+    if (username && password) {
+      setAuthUser({ username });
+      navigate(from, { replace: true });
     } else {
-      if (username && password) {
-        setAuthUser({ username });
-        navigate("/");
-      } else {
-        setError("Username and password required for login.");
-      }
+      setError("Please enter username and password.");
     }
-  };
+  }
+
+  function handleSignup(e) {
+    e.preventDefault();
+    if (email && username && password) {
+      setAuthUser({ username, email });
+      navigate(from, { replace: true });
+    } else {
+      setError("Please fill all fields.");
+    }
+  }
+
+  function handleForgot(e) {
+    e.preventDefault();
+    if (!email) {
+      setError("Please enter your email.");
+      return;
+    }
+    // Simulate OTP generation
+    const fakeOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(fakeOtp);
+    setOtpStep(1);
+    setError("");
+  }
+
+  function handleOtp(e) {
+    e.preventDefault();
+    if (otp === generatedOtp) {
+      setOtpStep(2);
+      setError("");
+    } else {
+      setError("Invalid OTP. Try again.");
+    }
+  }
+
+  function handleResetPassword(e) {
+    e.preventDefault();
+    if (!newPassword) {
+      setError("Please enter a new password.");
+      return;
+    }
+    // Simulate password update
+    setPassword(newPassword);
+    setOtpStep(3); // done
+    setError("");
+  }
+
+  function handleContinue() {
+    setMode("login");
+    setOtpStep(0);
+    setEmail("");
+    setOtp("");
+    setGeneratedOtp("");
+    setNewPassword("");
+    setError("");
+  }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-6"
-      style={{
-        backgroundImage: `url(${loginBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        fontFamily: "Nunito, 'Segoe UI', 'Roboto', 'Arial', sans-serif",
-      }}
-    >
-      <div className="bg-white bg-opacity-80 rounded-3xl shadow-gold p-12 max-w-lg w-full backdrop-blur-sm animate-fadeInUp">
-        <h2
-          className="mb-10 text-center text-5xl md:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-yellow-500 to-orange-400 drop-shadow-lg animate-gradientX font-serif"
-          style={{ fontFamily: "'Marcellus', serif" }}
-        >
-          {isSignup ? "Join Kolam Studio" : "Welcome"}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="flex flex-col items-start animate-slideInLeft">
-            <label
-              htmlFor="username"
-              className="block mb-2 font-semibold text-xl text-yellow-700"
-              style={{ letterSpacing: "1px" }}
-            >
-              Username
-            </label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Your username"
-              required
-              autoComplete="username"
-              className="w-full rounded-lg border-2 border-yellow-400 px-5 py-3 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:border-orange-500 text-lg transition duration-300 bg-yellow-50 shadow-sm"
-            />
-          </div>
-
-          {isSignup && (
-            <div className="flex flex-col items-start animate-slideInLeft">
-              <label
-                htmlFor="email"
-                className="block mb-2 font-semibold text-xl text-yellow-700"
-                style={{ letterSpacing: "1px" }}
-              >
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                autoComplete="email"
-                className="w-full rounded-lg border-2 border-yellow-400 px-5 py-3 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:border-orange-500 text-lg transition duration-300 bg-yellow-50 shadow-sm"
-              />
-            </div>
-          )}
-
-          <div className="flex flex-col items-start animate-slideInLeft">
-            <label
-              htmlFor="password"
-              className="block mb-2 font-semibold text-xl text-yellow-700"
-              style={{ letterSpacing: "1px" }}
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              autoComplete={isSignup ? "new-password" : "current-password"}
-              className="w-full rounded-lg border-2 border-yellow-400 px-5 py-3 focus:outline-none focus:ring-4 focus:ring-orange-400 focus:border-orange-500 text-lg transition duration-300 bg-yellow-50 shadow-sm"
-            />
-          </div>
-
-          {error && (
-            <p className="text-center text-red-600 font-bold animate-pulse text-lg">
-              {error}
-            </p>
-          )}
-
+    <div className="flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+        <div className="flex justify-center mb-6 gap-4">
           <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 text-white text-2xl font-extrabold py-3 rounded-xl shadow-md hover:shadow-pink-500 hover:scale-105 transform transition duration-300 animate-pop"
-            style={{ fontFamily: "'Marcellus', serif" }}
+            className={`font-bold text-lg px-4 py-1 rounded ${mode === "login" ? "bg-orange-200" : "bg-gray-100"}`}
+            onClick={() => { setMode("login"); setError(""); }}
+            disabled={mode === "login"}
           >
-            {isSignup ? "Create Account" : "Login"}
+            Login
           </button>
-        </form>
+          <button
+            className={`font-bold text-lg px-4 py-1 rounded ${mode === "signup" ? "bg-orange-200" : "bg-gray-100"}`}
+            onClick={() => { setMode("signup"); setError(""); }}
+            disabled={mode === "signup"}
+          >
+            Sign Up
+          </button>
+        </div>
 
-        <p
-          className="mt-8 text-center text-orange-600 font-semibold cursor-pointer underline hover:text-pink-600 transition-all duration-300 text-lg animate-bounce"
-          onClick={() => {
-            setIsSignup(!isSignup);
-            setError("");
-          }}
-          aria-label="Toggle between sign up and login"
-        >
-          {isSignup ? "Already have an account? Login" : "First time here? Sign Up"}
-        </p>
+        {mode === "login" && (
+          <form onSubmit={handleLogin}>
+            <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+            {error && <div className="text-red-500 mb-4">{error}</div>}
+            <input
+              className="w-full mb-4 p-2 border rounded"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
+            <input
+              className="w-full mb-4 p-2 border rounded"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            <div className="flex items-center mb-4">
+              <input type="checkbox" id="showpass" checked={showPassword} onChange={() => setShowPassword(v => !v)} />
+              <label htmlFor="showpass" className="ml-2 text-sm">Show Password</label>
+            </div>
+            <Button type="submit" variant="primary" className="w-full mb-2">
+              Login
+            </Button>
+            <button
+              type="button"
+              className="text-blue-600 underline text-sm w-full text-center mt-2"
+              onClick={() => { setMode("forgot"); setOtpStep(0); setError(""); }}
+            >
+              Forgot password?
+            </button>
+          </form>
+        )}
+
+        {mode === "signup" && (
+          <form onSubmit={handleSignup}>
+            <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+            {error && <div className="text-red-500 mb-4">{error}</div>}
+            <input
+              className="w-full mb-4 p-2 border rounded"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <input
+              className="w-full mb-4 p-2 border rounded"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+            />
+            <input
+              className="w-full mb-4 p-2 border rounded"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            <div className="flex items-center mb-4">
+              <input type="checkbox" id="showpass2" checked={showPassword} onChange={() => setShowPassword(v => !v)} />
+              <label htmlFor="showpass2" className="ml-2 text-sm">Show Password</label>
+            </div>
+            <Button type="submit" variant="primary" className="w-full mb-2">
+              Sign Up
+            </Button>
+          </form>
+        )}
+
+        {mode === "forgot" && (
+          <form onSubmit={handleForgot}>
+            <h2 className="text-2xl font-bold mb-6 text-center">Forgot Password</h2>
+            {error && <div className="text-red-500 mb-4">{error}</div>}
+            {otpStep === 0 && (
+              <>
+                <input
+                  className="w-full mb-4 p-2 border rounded"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+                <Button type="submit" variant="primary" className="w-full mb-2">
+                  Send OTP
+                </Button>
+              </>
+            )}
+            {otpStep === 1 && (
+              <>
+                <div className="mb-2 text-green-700 text-sm">OTP sent to your email! (Demo OTP: <b>{generatedOtp}</b>)</div>
+                <input
+                  className="w-full mb-4 p-2 border rounded"
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={e => setOtp(e.target.value)}
+                />
+                <Button onClick={handleOtp} variant="primary" className="w-full mb-2">
+                  Verify OTP
+                </Button>
+              </>
+            )}
+            {otpStep === 2 && (
+              <>
+                <div className="mb-4 text-green-700">OTP verified!</div>
+                <div className="mb-2">Do you want to update your password or continue as it is?</div>
+                <div className="flex gap-2">
+                  <Button onClick={() => setOtpStep(4)} variant="primary" className="w-full mb-2">Update Password</Button>
+                  <Button onClick={handleContinue} variant="secondary" className="w-full mb-2">Continue</Button>
+                </div>
+              </>
+            )}
+            {otpStep === 4 && (
+              <form onSubmit={handleResetPassword}>
+                <input
+                  className="w-full mb-4 p-2 border rounded"
+                  type="password"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                />
+                <Button type="submit" variant="primary" className="w-full mb-2">Update Password</Button>
+              </form>
+            )}
+            {otpStep === 3 && (
+              <>
+                <div className="mb-4 text-green-700">Password updated successfully!</div>
+                <Button onClick={handleContinue} variant="primary" className="w-full mb-2">Back to Login</Button>
+              </>
+            )}
+          </form>
+        )}
       </div>
-
-      <style>
-        {`
-          @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(50px);}
-            to { opacity: 1; transform: translateY(0);}
-          }
-          .animate-fadeInUp {
-            animation: fadeInUp 0.8s cubic-bezier(0.77,0,0.175,1) both;
-          }
-          @keyframes gradientX {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-          }
-          .animate-gradientX {
-            background-size: 200% 200%;
-            animation: gradientX 2s infinite alternate linear;
-          }
-          @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          .animate-slideInLeft {
-            animation: slideInLeft 0.5s ease-out forwards;
-          }
-          @keyframes pop {
-            0% { transform: scale(0.8); }
-            80% { transform: scale(1.08);}
-            100% { transform: scale(1);}
-          }
-          .animate-pop {
-            animation: pop 0.5s cubic-bezier(.2,.68,.31,1.21) both;
-          }
-        `}
-      </style>
     </div>
   );
 }

@@ -8,6 +8,9 @@ export default function CoordinateCanvas() {
   const [gridSize, setGridSize] = useState(5)
   const canvasRef = useRef(null)
 
+  // For extra scroll space
+  const extraSpace = <div style={{ minHeight: '60vh' }} />;
+
   // Initialize blank background on mount
   useEffect(() => {
     const canvas = canvasRef.current
@@ -275,6 +278,18 @@ export default function CoordinateCanvas() {
           </div>
         </motion.div>
       </div>
+      {/* Coming Soon Pop-up */}
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-32 z-50 w-[98vw] max-w-3xl">
+        <div className="px-8 py-4 rounded-2xl shadow-xl border-2 border-cyan-400 bg-gradient-to-r from-cyan-100 via-blue-50 to-cyan-200/90 backdrop-blur-xl flex flex-col items-center animate-pulse">
+          <span className="block text-lg md:text-2xl font-extrabold bg-gradient-to-r from-cyan-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent tracking-wide mb-1 drop-shadow-lg animate-gradient-x uppercase text-center">
+            coming soon !!
+          </span>
+          <span className="block text-base md:text-lg font-semibold text-cyan-900 text-center mb-1">
+            The user can give random coordinates, and the model will suggest the next coordinates to build a good kolam design. After the final design is made, the AI model will enhance it. We can achieve this by CNN model training and ML integration. Stay updated, coming soon.
+          </span>
+        </div>
+      </div>
+      {extraSpace}
     </div>
   )
 }

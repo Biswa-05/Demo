@@ -75,7 +75,7 @@ export default function UploadAnalyze() {
 
   return (
     <div
-      className="relative min-h-screen py-10 px-6 bg-cover bg-center"
+      className="relative min-h-[180vh] py-10 px-6 bg-cover bg-center"
       style={{ backgroundImage: "url('/src/assets/Uploadimage.png')" }}
     >
       {/* Page Title */}
@@ -149,6 +149,43 @@ export default function UploadAnalyze() {
           </motion.div>
         )}
       </div>
+
+      {/* Coming Soon: Kolam Design Principles & AI/ML */}
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 bottom-40 z-50 w-[98vw] max-w-4xl"
+  initial={{ opacity: 0, y: 60 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 3, delay: 0.5, type: 'spring', bounce: 0.2, ease: 'easeOut' }}
+      >
+        <div className="px-10 py-4 rounded-2xl shadow-xl border-2 border-yellow-400 bg-gradient-to-r from-yellow-100 via-orange-50 to-yellow-200/90 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-4 animate-pulse">
+          <div className="flex-1 min-w-0">
+            <span className="block text-xl md:text-2xl font-extrabold bg-gradient-to-r from-orange-600 via-yellow-500 to-red-500 bg-clip-text text-transparent tracking-wide mb-1 drop-shadow-lg animate-gradient-x uppercase text-center md:text-left">
+              Kolam Design Principles & Regeneration
+            </span>
+            <span className="block text-base md:text-lg font-semibold text-orange-900 text-center md:text-left mb-1">
+              Unlocking the secrets of Kolam creation, regeneration, and mathematical beauty—directly from your uploaded image.
+            </span>
+            <span className="block mt-1 text-sm md:text-base font-medium text-orange-700 text-center md:text-left">
+              <span className="font-bold text-orange-600">AI/ML-powered analysis</span> and <span className="font-bold text-orange-600">automated Kolam regeneration</span> are on the horizon.<br/>
+              <span className="italic text-orange-800">A new era of Kolam intelligence is coming soon. Stay tuned!</span>
+            </span>
+          </div>
+          <div className="flex flex-col gap-2 items-center justify-center mt-2 md:mt-0">
+            {[0,1,2,3].map((i) => (
+              <motion.span
+                key={i}
+                className="text-xs font-bold text-red-500 whitespace-nowrap animate-bounce"
+                initial={{ scale: 0.7, opacity: 0, rotate: -10 }}
+                animate={{ scale: [0.7, 1.2, 1], opacity: 1, rotate: [ -10, 5, 0 ] }}
+                transition={{ duration: 1.5, type: 'spring', bounce: 0.5, delay: 1.2 + i * 0.2 }}
+                whileHover={{ scale: 1.15, color: '#b91c1c', textShadow: '0 0 8px #f87171' }}
+              >
+                coming soon !!
+              </motion.span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
     </div>
   )
 }

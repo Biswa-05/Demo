@@ -102,7 +102,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Bottom: Learn About Kolams */}
+          {/* Bottom: Learn About Kolams (redirects to /math, which is protected) */}
           <motion.div variants={popIn}>
             <motion.div
               whileHover={{
@@ -111,7 +111,7 @@ export default function Home() {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button variant="secondary" onClick={() => navigate("/history")}>
+              <Button variant="secondary" onClick={() => navigate("/math")}> 
                 Learn About Kolams
               </Button>
             </motion.div>
