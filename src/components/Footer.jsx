@@ -1,12 +1,8 @@
-import { motion } from "framer-motion";
 
 export default function Footer() {
   return (
-    <motion.footer
+    <footer
       className="relative bg-gradient-to-br from-yellow-50 via-orange-100 to-pink-100 text-orange-700 pt-10 pb-6 mt-16 border-t-4 border-orange-200 shadow-xl overflow-hidden"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 1 }}
     >
       {/* Decorative Top Border */}
       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-300 via-orange-200 to-pink-200 opacity-80 rounded-t-xl shadow-md" />
@@ -52,83 +48,50 @@ export default function Footer() {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-2 bg-gradient-to-r from-yellow-200 via-orange-100 to-pink-100 opacity-70 rounded-b-xl shadow" />
 
       {/* Team Section at the very bottom - simple */}
-      <motion.div
+      <div
         className="max-w-4xl mx-auto px-2 py-2 mt-4 bg-white/60 flex flex-col items-center"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.05 }}
       >
         <div className="text-sm font-semibold text-orange-600 mb-1">Our Team</div>
         <div className="text-center text-xs text-orange-500 font-medium mb-2">Students of BCA, KIIT University</div>
         <div className="flex flex-wrap justify-center gap-1 md:gap-2">
-          <motion.div
-            className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs"
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-          >
+          <div className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs">
             <span className="font-semibold text-orange-700 mr-1">Biswajit Dash</span>
             <a href="mailto:bdash@gmail.com" className="text-blue-600 hover:underline">
               bdash@gmail.com
             </a>
-          </motion.div>
-          <motion.div
-            className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs"
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
+          </div>
+          <div className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs">
             <span className="font-semibold text-orange-700 mr-1">K.Vinay Kumar</span>
             <a href="mailto:vk4984630@gmail.com" className="text-blue-600 hover:underline">
               vk4984630@gmail.com
             </a>
-          </motion.div>
-          <motion.div
-            className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs"
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-          >
+          </div>
+          <div className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs">
             <span className="font-semibold text-orange-700 mr-1">Anish Kumar</span>
             <a href="mailto:anishkumar200507@gmail.com" className="text-blue-600 hover:underline">
               anishkumar200507@gmail.com
             </a>
-          </motion.div>
-          <motion.div
-            className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs"
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
+          </div>
+          <div className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs">
             <span className="font-semibold text-orange-700 mr-1">Vivek Salunkhe</span>
             <a href="mailto:viveksalunkhe110@gmail.com" className="text-blue-600 hover:underline">
               viveksalunkhe110@gmail.com
             </a>
-          </motion.div>
-          <motion.div
-            className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs"
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.25 }}
-          >
+          </div>
+          <div className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs">
             <span className="font-semibold text-orange-700 mr-1">Chaitiparna Chandra</span>
             <a href="mailto:chaitiparna33@gmail.com" className="text-blue-600 hover:underline">
               chaitiparna33@gmail.com
             </a>
-          </motion.div>
-          <motion.div
-            className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs"
-            initial={{ opacity: 0, x: -15 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
+          </div>
+          <div className="flex items-center bg-orange-50/80 rounded px-2 py-1 shadow-sm text-xs">
             <span className="font-semibold text-orange-700 mr-1">Subrat Rout</span>
             <a href="mailto:shubxtra@gmail.com" className="text-blue-600 hover:underline">
               shubxtra@gmail.com
             </a>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
-    </motion.footer>
+      </div>
+    </footer>
   );
 }
