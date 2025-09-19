@@ -79,10 +79,11 @@ export default function MathAnalysis() {
   // Save chat to sessionStorage on every update
   React.useEffect(() => {
     sessionStorage.setItem("kolam_chat_history", JSON.stringify(messages));
-    if (chatEndRef.current) {
+    // Only scroll if chat is open and not on initial page load
+    if (chatOpen && chatEndRef.current && messages.length > 1) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, chatOpen]);
 
   // Send full chat history to AI
   const handleSend = async () => {
