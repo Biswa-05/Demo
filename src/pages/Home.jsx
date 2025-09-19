@@ -3,6 +3,7 @@ import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import Button from "../components/Button"
 import bgKolam from "../assets/kolam-bg.jpg"
+import ganeshaKolam from "../assets/GaneshKolam.png"
 
 export default function Home() {
   const navigate = useNavigate()
@@ -15,12 +16,10 @@ export default function Home() {
       transition: { staggerChildren: 0.3, delayChildren: 0.2 },
     },
   }
-
   const fadeUp = {
     hidden: { opacity: 0, y: 50 },
     show: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } },
   }
-
   const bounceIn = {
     hidden: { opacity: 0, scale: 0.8 },
     show: {
@@ -29,7 +28,6 @@ export default function Home() {
       transition: { type: "spring", stiffness: 120, damping: 10 },
     },
   }
-
   const popIn = {
     hidden: { opacity: 0, y: 30, rotate: -5 },
     show: {
@@ -49,6 +47,18 @@ export default function Home() {
         backgroundPosition: "center",
       }}
     >
+      {/* Ganesh Kolam Image Blended Center */}
+      <img
+        src={ganeshaKolam}
+        alt="Ganesh Kolam"
+        className="pointer-events-none absolute top-1/2 left-1/2 max-w-[400px] max-h-[400px] -translate-x-1/2 -translate-y-1/2"
+        style={{
+          opacity: 0.85,
+          mixBlendMode: "multiply", // smooth blend with bg
+          filter: "brightness(1.2) contrast(1.2)" // pops white lines
+        }}
+      />
+
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40" />
 
@@ -66,7 +76,6 @@ export default function Home() {
         >
           Kolam Studio
         </motion.h1>
-
         {/* Subtitle */}
         <motion.p
           className="mt-6 text-lg md:text-2xl max-w-2xl mx-auto font-light text-gray-100 leading-relaxed"
@@ -78,7 +87,6 @@ export default function Home() {
           <span className="text-orange-400 font-semibold">geometry</span> and
           culture.
         </motion.p>
-
         {/* Buttons */}
         <motion.div
           className="mt-10 flex flex-col items-center gap-6"
@@ -94,15 +102,13 @@ export default function Home() {
                 Start Exploring
               </Button>
             </motion.div>
-
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
               <Button variant="accent" onClick={() => navigate("/upload")}>
                 Upload & Analyze
               </Button>
             </motion.div>
           </motion.div>
-
-          {/* Bottom: Learn About Kolams (redirects to /math, which is protected) */}
+          {/* Bottom: Learn About Kolams */}
           <motion.div variants={popIn}>
             <motion.div
               whileHover={{
@@ -111,7 +117,7 @@ export default function Home() {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button variant="secondary" onClick={() => navigate("/math")}> 
+              <Button variant="secondary" onClick={() => navigate("/math")}>
                 Learn About Kolams
               </Button>
             </motion.div>
